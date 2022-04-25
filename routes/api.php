@@ -14,8 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/purchase', [App\Http\Controllers\API\AuthController::class, 'purchase']);
 });
 
 Route::post('/register', [App\Http\Controllers\API\AuthController::class, 'register']);
+
+
+Route::post('/android_mock', [App\Http\Controllers\PlatformController::class, 'android_mock']);
+Route::post('/ios_mock', [App\Http\Controllers\PlatformController::class, 'ios_mock']);

@@ -3,8 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Device;
 
-class CreateDevicesTable extends Migration
+class CreateSubscriptionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +14,10 @@ class CreateDevicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('devices', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->string('uid');
-            $table->integer('appId');
-            $table->string('language');
-            $table->string('operating_system');
-            $table->datetime('expire_date')->nullable();
-            $table->index(['expire_date']);
+            $table->foreignIdFor(Device::class);
+            $table->enum('status', ['started', 'renewed', 'canceled', 'failed'])->default('started');
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ class CreateDevicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('devices');
+        Schema::dropIfExists('subscriptions');
     }
 }

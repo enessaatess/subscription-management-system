@@ -14,6 +14,6 @@ class Device extends Model
         'uid',
         'appId',
         'language',
-        'operating-system',
+        'operating_system',
     ];
 }
