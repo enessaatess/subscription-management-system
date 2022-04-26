@@ -53,4 +53,28 @@ class PlatformController extends Controller
 
     }
 
+    //worker controle for subscription
+    public function ios_control(Request $request)
+    {
+        dd('burada');
+        $request->validate([
+            'receipt' => 'required|string|max:255',
+        ]);
+
+        if($request->receipt % 2 == 0){
+            return response()
+            ->json(['status' => "canceled"],200);
+        }
+
+        $expire_date = Carbon::now()->addHours(rand(0,5))->format('Y-m-d H:i:s');
+
+        return response()
+        ->json([
+            'message'=> 'OK',
+            'status' => "renewed",
+            'expire_date' => $expire_date
+        ], 200);
+
+    }
+
 }

@@ -15,5 +15,10 @@ class Device extends Model
         'appId',
         'language',
         'operating_system',
+        'expire_date'
     ];
+
+    public function getSubscription(){
+        return $this->belongsTo(Subscription::class,'device_id','id');
+    }
 }

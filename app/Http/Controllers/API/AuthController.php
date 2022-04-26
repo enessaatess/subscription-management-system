@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Device;
 use GuzzleHttp\Client;
+use App\Models\Subscription;
 use Illuminate\Support\Facades\Http;
 
 
@@ -41,6 +42,8 @@ class AuthController extends Controller
         ->json(['status' => "OK", 'client_token' => $token],200);
     }
 
+
+
     /**
      * Purchase
      *
@@ -49,7 +52,6 @@ class AuthController extends Controller
      */
     public function purchase(Request $request)
     {
-
         $request->validate([
             'receipt' => 'required|string|max:255',
         ]);
@@ -61,7 +63,55 @@ class AuthController extends Controller
             $purchase = $this->androidPurchase($request->receipt);
 
         }
-        dd($purchase);
+
+        if($purchase['status'] == "true"){
+            $request->user()->update([
+                'expire_date' => $purchase['expire_date']
+            ]);
+            $new = Subscription::create([
+                'device_id' => $request->user()->id,
+                'status' => 'started'
+            ]);
+        }
+        else {
+            $new = Subscription::create([
+                'device_id' => $request->user()->id,
+                'status' => 'failed'
+            ]);
+        }
+
+        return response()
+        ->json([
+            'message'=> 'OK',
+            'status' => $new['status']
+        ], 200);
+
+    }
+
+    /**
+     * Check Subsciption
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkSubsciption(Request $request)
+    {
+        $subscription = Subscription::where('device_id', $request->user()->id)->latest()->first();
+
+        if($subscription){
+            return response()
+            ->json([
+                'message'=> 'OK',
+                'status' => $subscription['status']
+            ], 200);
+        }
+        else {
+            return response()
+            ->json([
+                'message'=> 'OK',
+                'status' => 'false'
+            ], 200);
+        }
     }
 
     /**
