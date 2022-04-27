@@ -4,12 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Models\Device;
-use GuzzleHttp\Client;
-use App\Models\Subscription;
 use Illuminate\Support\Facades\Http;
 
+use App\Models\Device;
+use App\Models\Subscription;
 
 class AuthController extends Controller
 {
@@ -129,7 +127,6 @@ class AuthController extends Controller
         );
 
         return $response->json();
-
     }
 
     /**
