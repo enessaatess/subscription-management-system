@@ -14,19 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/purchase', [App\Http\Controllers\API\AuthController::class, 'purchase']);
+//use api version
+Route::prefix('v1')->group(function () {
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/purchase', [App\Http\Controllers\API\AuthController::class, 'purchase']);
+        Route::post('/check_subsciption', [App\Http\Controllers\API\AuthController::class, 'checkSubsciption']);
+    });
+
+    Route::post('/register', [App\Http\Controllers\API\AuthController::class, 'register']);
+
+    //purchase mock address
+    Route::post('/android_mock', [App\Http\Controllers\PlatformController::class, 'android_mock']);
+    Route::post('/ios_mock', [App\Http\Controllers\PlatformController::class, 'ios_mock']);
+
+    //worker mock address
+    Route::post('/ios_control', [App\Http\Controllers\PlatformController::class, 'ios_control']);
+    Route::post('/android_control', [App\Http\Controllers\PlatformController::class, 'android_control']);
+
 });
-
-Route::post('/register', [App\Http\Controllers\API\AuthController::class, 'register']);
-Route::post('/check_subsciption', [App\Http\Controllers\API\AuthController::class, 'checkSubsciption']);
-
-
-Route::post('/android_mock', [App\Http\Controllers\PlatformController::class, 'android_mock']);
-Route::post('/ios_mock', [App\Http\Controllers\PlatformController::class, 'ios_mock']);
-
-Route::post('/ios_control', [App\Http\Controllers\PlatformController::class, 'ios_control']);
-
-//deneme
-Route::post('/isSubscribed', [App\Http\Controllers\ControlSubscriptionController::class, 'isSubscribed']);
 

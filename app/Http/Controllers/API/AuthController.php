@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+
 
 use App\Models\Device;
 use App\Models\Subscription;
@@ -126,13 +128,21 @@ class AuthController extends Controller
         }
     }
 
+    //testing function - not used
+    public function report(){
+        // $app = Subscription::
+        //          select('status', DB::raw('count(*) as total'))->where('device_id', 1)
+        //          ->groupBy('status')
+        //          ->get();
 
-    public function report(Request $request){
-        $request->validate([
-            'receipt' => 'required|string|max:255',
-        ]);
-
-
+                 Subscription::select([
+                    DB::raw('count(device_id) as device'),
+                    DB::raw('week(status) as week'),
+                    DB::raw('year(created_at) as year')
+                ])
+                ->groupBy(['year', 'week'])
+                ->get()
+                ->toArray();
     }
 
     /**
