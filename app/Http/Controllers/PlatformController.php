@@ -56,11 +56,6 @@ class PlatformController extends Controller
     //worker controle for subscription
     public function ios_control(Request $request)
     {
-        dd('burada');
-        $request->validate([
-            'receipt' => 'required|string|max:255',
-        ]);
-
         if($request->receipt % 2 == 0){
             return response()
             ->json(['status' => "canceled"],200);

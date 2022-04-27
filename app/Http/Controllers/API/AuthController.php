@@ -5,9 +5,11 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 use App\Models\Device;
 use App\Models\Subscription;
+
 
 class AuthController extends Controller
 {
@@ -54,12 +56,24 @@ class AuthController extends Controller
             'receipt' => 'required|string|max:255',
         ]);
 
+        $isPremium = Cache::remember('purchase:'.$request->user()->id, 86400, function () use ($request) {
+            $subscription= Subscription::where('device_id', $request->user()->id)->latest()->first();
+            if(!$subscription){
+                return false;
+            }
+            return $subscription->status!='canceled';
+        });
+
+        if($isPremium){
+            return response()
+            ->json(['status' => "true"],200);
+        }
+
         if($request->user()->operating_system=="ios-appstore"){
             $purchase = $this->iosPurchase($request->receipt);
 
         } else{
             $purchase = $this->androidPurchase($request->receipt);
-
         }
 
         if($purchase['status'] == "true"){
@@ -112,6 +126,15 @@ class AuthController extends Controller
         }
     }
 
+
+    public function report(Request $request){
+        $request->validate([
+            'receipt' => 'required|string|max:255',
+        ]);
+
+
+    }
+
     /**
      * IOS Purchase
      *
@@ -120,7 +143,7 @@ class AuthController extends Controller
      */
     public function iosPurchase($receipt)
     {
-        $response = Http::post('http://127.0.0.1:8001/api/ios_mock',
+        $response = Http::withBasicAuth(config('config.ios_username'), config('config.ios_password'))->post('http://127.0.0.1:8001/api/ios_mock',
             [
                 'receipt' => $receipt,
             ]
@@ -137,7 +160,7 @@ class AuthController extends Controller
      */
     public function androidPurchase($receipt)
     {
-        $response = Http::post('http://127.0.0.1:8001/api/ios_mock',
+        $response = Http::withBasicAuth(config('config.android_username'), config('config.android_password'))->post('http://127.0.0.1:8001/api/ios_mock',
             [
                 'receipt' => $receipt,
             ]
