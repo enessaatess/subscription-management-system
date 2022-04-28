@@ -69,7 +69,7 @@ class CheckSubsciption implements ShouldQueue
 
     public function iosControle($receipt)
     {
-        $response = Http::withBasicAuth(config('config.ios_username'), config('config.ios_password'))->post('http://127.0.0.1:8001/api/ios_control',
+        $response = Http::withBasicAuth(config('config.ios_username'), config('config.ios_password'))->post('http://127.0.0.1:8001/api/v1/ios_control',
             [
                 'receipt' => $receipt,
             ]
@@ -88,7 +88,7 @@ class CheckSubsciption implements ShouldQueue
      */
     public function androidControle($receipt)
     {
-        $response = Http::withBasicAuth(config('config.android_username'), config('config.android_password'))->post('http://127.0.0.1:8001/api/ios_control',
+        $response = Http::withBasicAuth(config('config.android_username'), config('config.android_password'))->post('http://127.0.0.1:8001/api/v1/ios_control',
             [
                 'receipt' => $receipt,
             ]
